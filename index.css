@@ -1,0 +1,43 @@
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradientMove {
+  background-size: 200% 200%;
+  animation: gradientMove 6s ease infinite;
+}
+
+
+/* Mouse Glow */
+.glow-form::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(
+    400px circle at var(--x) var(--y),
+    rgba(255, 255, 255, 0.12),
+    transparent 40%
+  );
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+/* Aurora Background */
+.aurora-bg {
+  background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05), transparent 50%),
+              radial-gradient(circle at 80% 70%, rgba(255,255,255,0.04), transparent 50%);
+  animation: auroraMove 12s ease-in-out infinite alternate;
+  filter: blur(40px);
+}
+
+@keyframes auroraMove {
+  0% {
+    transform: translateY(-10px) translateX(-10px);
+  }
+  100% {
+    transform: translateY(10px) translateX(10px);
+  }
+}

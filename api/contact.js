@@ -51,10 +51,22 @@ export default async function handler(req, res) {
       subject: `New message from ${name}`,
       reply_to: email,
       html: `
-        <h2>New Contact Message</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p>${message}</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#f9f9f9; padding:40px;">
+    <div style="max-width:600px; margin:auto; background:white; padding:30px; border-radius:16px;">
+      <h2 style="margin-bottom:20px;">🚀 New Portfolio Message</h2>
+      
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+
+      <div style="margin-top:20px; padding:20px; background:#f3f3f3; border-radius:12px;">
+        <p style="margin:0;">${message}</p>
+      </div>
+
+      <p style="margin-top:30px; font-size:12px; color:#888;">
+        Sent from your portfolio contact form.
+      </p>
+    </div>
+  </div>
       `,
     });
 
