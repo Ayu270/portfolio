@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { motion, AnimatePresence } from "framer-motion";
 import AnimatedHeaderSection from "../components/AnimatedHeaderSection";
 import Marquee from "../components/Marquee";
 import { socials } from "../constants";
@@ -28,7 +27,7 @@ I’d love to hear from you and discuss further!`;
   const [showToast, setShowToast] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // GSAP Fade-Up
+  // GSAP Fade-Up Animation
   useGSAP(() => {
     gsap.from(".fade-form", {
       y: 60,
@@ -41,7 +40,7 @@ I’d love to hear from you and discuss further!`;
     });
   }, []);
 
-  // Mouse Glow Effect
+  // Mouse Glow Tracking
   const handleMouseMove = (e) => {
     const rect = formRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -72,17 +71,19 @@ I’d love to hear from you and discuss further!`;
         setSuccess(true);
         setShowToast(true);
         setForm({ name: "", email: "", message: "" });
-        setTimeout(() => setShowToast(false), 3000);
       } else {
         throw new Error();
       }
     } catch {
       setSuccess(false);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
     }
 
     setLoading(false);
+
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
   };
 
   return (
@@ -141,80 +142,74 @@ I’d love to hear from you and discuss further!`;
 
             {/* RIGHT SIDE FORM */}
             <div className="relative w-full lg:w-1/2 fade-form">
+              <div className="relative isolate overflow-hidden rounded-2xl">
 
-              {/* Aurora Background */}
-              <div className="absolute inset-0 rounded-2xl aurora-bg"></div>
+                {/* Aurora Background */}
+                <div className="absolute inset-0 pointer-events-none aurora-bg"></div>
 
-              <form
-                ref={formRef}
-                onMouseMove={handleMouseMove}
-                onSubmit={handleSubmit}
-                className="relative p-8 space-y-6 border border-white/20 rounded-2xl bg-black/70 backdrop-blur-xl glow-form"
-              >
-                <h2 className="text-3xl font-light text-white">
-                  Send a Message
-                </h2>
-
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Your Name"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-4 text-white bg-transparent border border-white/20 rounded-xl focus:outline-none focus:border-white"
-                />
-
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your Email"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-4 text-white bg-transparent border border-white/20 rounded-xl focus:outline-none focus:border-white"
-                />
-
-                <textarea
-                  name="message"
-                  rows="5"
-                  placeholder="Your Message"
-                  value={form.message}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-4 text-white bg-transparent border border-white/20 rounded-xl focus:outline-none focus:border-white resize-none"
-                />
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-4 font-medium text-black bg-white rounded-xl hover:bg-white/90 disabled:opacity-50"
+                <form
+                  ref={formRef}
+                  onMouseMove={handleMouseMove}
+                  onSubmit={handleSubmit}
+                  className="relative p-8 space-y-6 border border-white/20 rounded-2xl bg-black/70 backdrop-blur-xl glow-form"
                 >
-                  {loading ? "Sending..." : "Send Message"}
-                </button>
-              </form>
+                  <h2 className="text-3xl font-light text-white">
+                    Send a Message
+                  </h2>
+
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Your Name"
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full p-4 text-white bg-transparent border border-white/20 rounded-xl focus:outline-none focus:border-white"
+                  />
+
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your Email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full p-4 text-white bg-transparent border border-white/20 rounded-xl focus:outline-none focus:border-white"
+                  />
+
+                  <textarea
+                    name="message"
+                    rows="5"
+                    placeholder="Your Message"
+                    value={form.message}
+                    onChange={handleChange}
+                    required
+                    className="w-full p-4 text-white bg-transparent border border-white/20 rounded-xl focus:outline-none focus:border-white resize-none"
+                  />
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-4 font-medium text-black bg-white rounded-xl hover:bg-white/90 disabled:opacity-50"
+                  >
+                    {loading ? "Sending..." : "Send Message"}
+                  </button>
+                </form>
+              </div>
             </div>
 
           </div>
         </div>
       </div>
 
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 50, opacity: 0 }}
-            className="fixed bottom-8 right-8 bg-white text-black px-6 py-4 rounded-xl shadow-xl flex items-center gap-3"
-          >
-            <span>
-              {success
-                ? "Message sent successfully!"
-                : "Something went wrong."}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Toast */}
+      {showToast && (
+        <div className="fixed bottom-8 right-8 bg-white text-black px-6 py-4 rounded-xl shadow-xl animate-fadeIn">
+          {success
+            ? "Message sent successfully!"
+            : "Something went wrong."}
+        </div>
+      )}
 
       <Marquee items={items} className="text-white bg-transparent" />
     </section>

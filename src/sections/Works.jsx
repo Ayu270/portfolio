@@ -9,10 +9,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const Works = () => {
-  const overlayRefs = useRef([]);
   const previewRef = useRef(null);
   const cardRefs = useRef([]);
   const imageRefs = useRef([]);
+  const overlayRefs = useRef([]);
 
   const [currentIndex, setCurrentIndex] = useState(null);
 
@@ -25,38 +25,26 @@ results and impact.`;
   const moveY = useRef(null);
 
   useGSAP(() => {
-    /* Desktop floating preview movement */
-    moveX.current = gsap.quickTo(previewRef.current, "x", {
-      duration: 1.5,
-      ease: "power3.out",
-    });
+    const ctx = gsap.context(() => {
 
-    moveY.current = gsap.quickTo(previewRef.current, "y", {
-      duration: 2,
-      ease: "power3.out",
-    });
+      // Floating preview smooth follow
+      moveX.current = gsap.quickTo(previewRef.current, "x", {
+        duration: 0.8,
+        ease: "power3.out",
+      });
 
-    /* Desktop stagger animation */
-    gsap.from(".project", {
-      y: 100,
-      opacity: 0,
-      delay: 0.5,
-      duration: 1,
-      stagger: 0.3,
-      ease: "back.out",
-      scrollTrigger: {
-        trigger: ".project",
-      },
-    });
+      moveY.current = gsap.quickTo(previewRef.current, "y", {
+        duration: 0.8,
+        ease: "power3.out",
+      });
 
-    /* 🍎 Mobile Animations */
-    if (window.innerWidth < 768) {
+      // Animate each project separately
       cardRefs.current.forEach((card) => {
         gsap.from(card, {
+          y: 80,
           opacity: 0,
-          y: 40,
           duration: 0.8,
-          ease: "power2.out",
+          ease: "power3.out",
           scrollTrigger: {
             trigger: card,
             start: "top 85%",
@@ -64,74 +52,75 @@ results and impact.`;
         });
       });
 
-      imageRefs.current.forEach((img) => {
-        gsap.fromTo(
-          img,
-          { scale: 1 },
-          {
-            scale: 1.06,
-            ease: "none",
-            scrollTrigger: {
-              trigger: img,
-              start: "top 85%",
-              end: "bottom 15%",
-              scrub: true,
-            },
-          }
-        );
-      });
-    }
+      // Mobile subtle image zoom
+      if (window.innerWidth < 768) {
+        imageRefs.current.forEach((img) => {
+          gsap.fromTo(
+            img,
+            { scale: 1 },
+            {
+              scale: 1.05,
+              ease: "none",
+              scrollTrigger: {
+                trigger: img,
+                start: "top 85%",
+                end: "bottom 20%",
+                scrub: true,
+              },
+            }
+          );
+        });
+      }
+    });
+
+    return () => ctx.revert();
   }, []);
 
   const handleMouseEnter = (index) => {
     if (window.innerWidth < 768) return;
+
     setCurrentIndex(index);
 
-    const el = overlayRefs.current[index];
-    if (!el) return;
+    const overlay = overlayRefs.current[index];
 
-    gsap.fromTo(
-      el,
-      {
-        clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)",
-      },
-      {
-        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)",
-        duration: 0.15,
-        ease: "power2.out",
-      }
-    );
+    gsap.to(overlay, {
+      clipPath: "inset(0% 0% 0% 0%)",
+      duration: 0.2,
+      ease: "power2.out",
+    });
 
     gsap.to(previewRef.current, {
       opacity: 1,
       scale: 1,
-      duration: 0.3,
+      duration: 0.25,
     });
   };
 
   const handleMouseLeave = (index) => {
     if (window.innerWidth < 768) return;
+
     setCurrentIndex(null);
 
-    const el = overlayRefs.current[index];
-    if (!el) return;
+    const overlay = overlayRefs.current[index];
 
-    gsap.to(el, {
-      clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)",
+    gsap.to(overlay, {
+      clipPath: "inset(100% 0% 0% 0%)",
       duration: 0.2,
     });
 
     gsap.to(previewRef.current, {
       opacity: 0,
       scale: 0.95,
-      duration: 0.3,
+      duration: 0.25,
     });
   };
 
   const handleMouseMove = (e) => {
     if (window.innerWidth < 768) return;
-    mouse.current.x = e.clientX + 24;
-    mouse.current.y = e.clientY + 24;
+
+    mouse.current.x = e.clientX + 20;
+    mouse.current.y = e.clientY + 20;
+
     moveX.current(mouse.current.x);
     moveY.current(mouse.current.y);
   };
@@ -139,7 +128,7 @@ results and impact.`;
   return (
     <section
       id="work"
-      className="flex flex-col min-h-screen bg-white py-6"
+      className="relative flex flex-col min-h-screen bg-white py-6 overflow-visible"
       style={{
         fontFamily:
           "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif",
@@ -154,7 +143,7 @@ results and impact.`;
       />
 
       <div
-        className="relative flex flex-col gap-6 md:gap-0"
+        className="relative flex flex-col gap-6"
         onMouseMove={handleMouseMove}
       >
         {projects.map((project, index) => (
@@ -167,73 +156,73 @@ results and impact.`;
           >
             <div
               ref={(el) => (cardRefs.current[index] = el)}
-              className="project relative z-0 flex flex-col py-6 md:py-5 cursor-pointer group
-                         mx-4 md:mx-0 rounded-xl md:rounded-none
-                         bg-neutral-100/80 backdrop-blur-sm md:bg-transparent
-                         transition-colors duration-300"
+              className="relative flex flex-col py-6 cursor-pointer group mx-4 md:mx-0 bg-neutral-100/80"
               onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={() => handleMouseLeave(index)}
             >
-              {/* Desktop overlay */}
+              {/* Overlay */}
               <div
                 ref={(el) => (overlayRefs.current[index] = el)}
-                className="absolute inset-0 hidden md:block bg-black -z-10"
+                className="absolute inset-0 hidden md:block bg-black z-0"
                 style={{
-                  clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)",
-                }}              
+                  clipPath: "inset(100% 0% 0% 0%)",
+                }}
               />
 
-              {/* Title */}
-              <div className="flex justify-between px-6 md:px-10 text-black transition-all duration-500 md:group-hover:px-12 md:group-hover:text-white">
-                <h2 className="text-[22px] md:text-[26px] lg:text-[32px] font-medium leading-tight">
-                  {project.name}
-                </h2>
-                <Icon icon="lucide:arrow-up-right" className="md:size-6 size-5" />
-              </div>
+              {/* Content Wrapper */}
+              <div className="relative z-10">
 
-              {/* Divider desktop only */}
-              <div className="hidden md:block w-full h-px bg-black/80" />
+                {/* Title */}
+                <div className="flex justify-between px-6 md:px-10 text-black transition-all duration-300 group-hover:text-white">
+                  <h2 className="text-[22px] md:text-[26px] lg:text-[32px] font-medium leading-tight">
+                    {project.name}
+                  </h2>
+                  <Icon icon="lucide:arrow-up-right" className="md:size-6 size-5" />
+                </div>
 
-              {/* Frameworks */}
-              <div className="flex flex-wrap px-6 md:px-10 mt-1
-                              text-[10px] md:text-sm tracking-wide uppercase
-                              gap-x-4 gap-y-1 transition-all duration-500
-                              md:group-hover:px-12">
-                {project.frameworks.map((framework) => (
-                  <p
-                    key={framework.id}
-                    className="text-black/70 md:text-black transition-colors duration-500 md:group-hover:text-white"
-                  >
-                    {framework.name}
-                  </p>
-                ))}
-              </div>
+                {/* Divider */}
+                <div className="hidden md:block w-full h-px bg-black/80 group-hover:bg-white/40 transition-colors" />
 
-              {/* Mobile Image */}
-              <div className="relative flex md:hidden mt-4 overflow-hidden rounded-xl">
-                <img
-                  ref={(el) => (imageRefs.current[index] = el)}
-                  src={project.image}
-                  alt={`${project.name}-image`}
-                  className="w-full h-auto object-contain will-change-transform"
-                />
+                {/* Frameworks */}
+                <div className="flex flex-wrap px-6 md:px-10 mt-2 text-[10px] md:text-sm tracking-wide uppercase gap-x-4 gap-y-1">
+                  {project.frameworks.map((framework) => (
+                    <p
+                      key={framework.id}
+                      className="text-black/70 group-hover:text-white transition-colors"
+                    >
+                      {framework.name}
+                    </p>
+                  ))}
+                </div>
+
+                {/* Mobile Image */}
+                <div className="relative flex md:hidden mt-4 overflow-hidden rounded-xl">
+                  <img
+                    ref={(el) => (imageRefs.current[index] = el)}
+                    src={project.image}
+                    alt={`${project.name}-image`}
+                    className="w-full h-auto object-contain will-change-transform"
+                  />
+                </div>
               </div>
             </div>
           </a>
         ))}
 
-        {/* Desktop Floating Preview */}
+        {/* Floating Preview (Desktop Only) */}
         <div
           ref={previewRef}
-          className="fixed -top-2/6 left-0 z-50 overflow-hidden border-8 border-black
-                     pointer-events-none w-[960px] md:block hidden opacity-0"
+          className="fixed top-0 left-0 z-40 pointer-events-none hidden md:block opacity-0"
+          style={{ transform: "translate(-50%, -50%)" }}
         >
           {currentIndex !== null && (
-            <img
-              src={projects[currentIndex].image}
-              alt="preview"
-              className="w-full h-full object-cover"
-            />
+            <div className="w-[720px] border-8 border-black overflow-hidden">
+              <img
+                src={projects[currentIndex].image}
+                alt="preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
           )}
         </div>
       </div>
