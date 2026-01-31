@@ -167,7 +167,7 @@ results and impact.`;
           >
             <div
               ref={(el) => (cardRefs.current[index] = el)}
-              className="project relative flex flex-col py-6 md:py-5 cursor-pointer group
+              className="project relative z-0 flex flex-col py-6 md:py-5 cursor-pointer group
                          mx-4 md:mx-0 rounded-xl md:rounded-none
                          bg-neutral-100/80 backdrop-blur-sm md:bg-transparent
                          transition-colors duration-300"
@@ -178,6 +178,9 @@ results and impact.`;
               <div
                 ref={(el) => (overlayRefs.current[index] = el)}
                 className="absolute inset-0 hidden md:block bg-black -z-10"
+                style={{
+                  clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)",
+                }}              
               />
 
               {/* Title */}
