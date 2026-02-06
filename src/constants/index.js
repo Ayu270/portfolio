@@ -111,8 +111,24 @@ export const projects = [
       { id: 6, name: "Upstash Redis" },
     ],
   },
+    {
+  id: 3,
+  name: "Font Stealer",
+  description:
+    "A browser-based developer tool to detect and extract font information from any website — perfect for designers and developers wanting font inspiration or debugging CSS typography.",
+  href: "https://font-stealerr.vercel.app",
+  image: "/assets/projects/font-stealer.jpg",
+  frameworks: [
+    { id: 1, name: "Next.js" },
+    { id: 2, name: "React" },
+    { id: 3, name: "TypeScript" },
+    { id: 4, name: "Tailwind CSS" },
+    { id: 5, name: "CSS" },
+    { id: 6, name: "Node.js" }
+  ],
+},
   {
-    id: 3,
+    id: 4,
     name: "YouTube Clone",
     description:
       "A YouTube-like platform with video streaming, comments, and user subscriptions.",
